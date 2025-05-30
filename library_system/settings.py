@@ -126,7 +126,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'admin@library.com')
 
 REST_FRAMEWORK = {
 
-    'DEFAULT_PAGINATION_CLASS' : ['rest_framework.pagination.PageNumberPagination',],
+    'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 
 }
