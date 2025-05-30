@@ -43,3 +43,4 @@ services:
 
 volumes:
   postgres_data:
+# docker-compose logs -f --timestamps celery

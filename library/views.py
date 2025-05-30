@@ -11,7 +11,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthorSerializer
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.all().select_related('author')
     serializer_class = BookSerializer
 
     @action(detail=True, methods=['post'])
@@ -52,3 +52,21 @@ class MemberViewSet(viewsets.ModelViewSet):
 class LoanViewSet(viewsets.ModelViewSet):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+
+
+    @action(detail=True, methods=['post'])
+    def extend_due_date(self, request):
+        loan = self.get_object()
+        if loan.due_date < timezone.now().date():
+            return Response({'error': 'Cannot extend due date for overdue loans.'}, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data
+        additional_days = data.get('additional_days')
+        if not isinstance(additional_days, int):
+            return Response({'error': 'Invalid additional days provided. must be int'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            loan = Loan.objects.get(id=loan.id, is_returned=False)
+            loan.due_date += timezone.timedelta(days=additional_days)
+            loan.save()
+            return Response({'status': 'Due date extended successfully.'}, status=status.HTTP_200_OK)
+        except Loan.DoesNotExist:
+            return Response({'error': 'Loan does not exist or has already been returned.'}, status=status.HTTP_400_BAD_REQUEST)
