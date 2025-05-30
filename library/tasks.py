@@ -19,7 +19,7 @@ def send_loan_notification(loan_id):
         )
     except Loan.DoesNotExist:
         pass
-    
+
 @shared_task
 def send_overdue_notification(member, overdue_loans):
     try:
@@ -32,6 +32,7 @@ def send_overdue_notification(member, overdue_loans):
             recipient_list=[member_email],
             fail_silently=False,
         )
+        print(f"Overdue notification sent to {member.user.username} for books: {book_titles}")
     except Exception as e:
         print(f"Error sending overdue notification: {str(e)}")
 

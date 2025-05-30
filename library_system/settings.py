@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # Local apps
     'library', 
+    'django_celery_beat',
     'debug_toolbar',
 ]
 
